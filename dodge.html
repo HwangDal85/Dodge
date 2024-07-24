@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dodge</title>
+    <style>
+        body {
+            margin: 100px 30px 0px;
+            overflow: hidden; /* 게임 요소가 화면 밖으로 나가지 않도록 */
+            text-align: right;
+            font-family: Arial, sans-serif;
+        }
+
+        .target {
+            width: 50px;
+            height: 50px;
+            background-color: teal;
+            transition: 0.1s;
+            position: absolute;
+            bottom: 10vh;
+            left: 50%;
+            transform: translateX(-50%);
+        }
+
+        .lightning {
+            width: 30px;
+            height: 30px;
+            position: absolute;
+            top: 0;
+        }
+
+        #timer {
+            font-size: 24px;
+            margin-bottom: 20px;
+        }
+    </style>
+</head>
+
+<body>
+
+    <div id="timer">Time: 0s</div>
+    <div class="target"></div>
+
+    <script>
+        const target = document.querySelector('.target');
+        const gameArea = document.body;
+        const timerElement = document.getElementById('timer');
+        let pos = 0;
+        let startTime;
+
+        function move(event) {
+            const keyName = event.key;
+            const targetPos = target.getBoundingClientRect();
+
+            if (keyName === 'ArrowRight') {
+                if (!(targetPos.right + 10 > window.innerWidth)) {
+                    pos += 15;
+                    target.style.transform = `translate(${pos}px, -50%)`;
+                }
+            }
+
+            if (keyName === 'ArrowLeft') {
+                if (!(targetPos.left < 10)) {
+                    pos -= 15;
+                    target.style.transform = `translate(${pos}px, -50%)`;
+                }
+            }
+        }
+
+        function createLightning() {
+            const lightning = document.createElement('img');
+            lightning.src = 'lightning.jpg';
+            lightning.classList.add('lightning');
+            lightning.style.left = `${Math.random() * 90}vw`;
+            gameArea.appendChild(lightning);
+
+            moveLightning(lightning);
+        }
+
+        function moveLightning(lightning) {
+            let y = 0;
+
+            function fall() {
+                if (y < window.innerHeight) {
+                    y += 3;
+                    lightning.style.transform = `translateY(${y}px)`;
+                    requestAnimationFrame(fall);
+                } else {
+                    lightning.remove();
+                }
+            }
+            fall();
+        }
+
+        function startGame() {
+            setInterval(createLightning, 1000); // 1초마다 번개 생성
+            document.addEventListener('keydown', move);
+            startTime = Date.now();
+            updateTimer();
+        }
+
+        function updateTimer() {
+            const elapsedTime = Math.floor((Date.now() - startTime) / 1000);
+            timerElement.textContent = `Time: ${elapsedTime}s`;
+            requestAnimationFrame(updateTimer);
+        }
+
+        startGame();
+    </script>
+</body>
+
+</html>
