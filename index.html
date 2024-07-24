@@ -86,7 +86,18 @@
                 if (y < window.innerHeight) {
                     y += 3;
                     lightning.style.transform = `translateY(${y}px)`;
-                    requestAnimationFrame(fall);
+
+                    // 충돌감지 
+                    const lightningPos = lightning.getBoundingClientRect();
+                    const targetPos = target.getBoundingClientRect();
+
+                    if (lightningPos.left < targetPos.right && lightningPos.right > targetPos.left &&
+                        lightningPos.top < targetPos.bottom && lightningPos.bottom > targetPos.top) {
+                        alert("게임종료");
+                        location.reload();
+                    } else {
+                        requestAnimationFrame(fall);
+                    }
                 } else {
                     lightning.remove();
                 }
